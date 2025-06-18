@@ -1,0 +1,56 @@
+package com.coptone.source.service;
+
+import com.coptone.source.entity.PlateNumber;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+/**
+ * (PlateNumber)表服务接口
+ *
+ * @author Coptone
+ * @since 2025-06-18 11:38:53
+ */
+public interface PlateNumberService {
+
+    /**
+     * 通过ID查询单条数据
+     *
+     * @param plateNumberId 主键
+     * @return 实例对象
+     */
+    PlateNumber queryById(Integer plateNumberId);
+
+    /**
+     * 分页查询
+     *
+     * @param plateNumber 筛选条件
+     * @param pageRequest 分页对象
+     * @return 查询结果
+     */
+    Page<PlateNumber> queryByPage(PlateNumber plateNumber, PageRequest pageRequest);
+
+    /**
+     * 新增数据
+     *
+     * @param plateNumber 实例对象
+     * @return 实例对象
+     */
+    PlateNumber insert(PlateNumber plateNumber);
+
+    /**
+     * 修改数据
+     *
+     * @param plateNumber 实例对象
+     * @return 实例对象
+     */
+    PlateNumber update(PlateNumber plateNumber);
+
+    /**
+     * 通过主键删除数据
+     *
+     * @param plateNumberId 主键
+     * @return 是否成功
+     */
+    boolean deleteById(Integer plateNumberId);
+
+}

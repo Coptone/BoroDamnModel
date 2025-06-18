@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.dao.ModelPlateDao">
+
+    <resultMap type="com.coptone.source.entity.ModelPlate" id="ModelPlateMap">
+        <result property="modelPlateId" column="model_plate_id" jdbcType="INTEGER"/>
+        <result property="plateNumberId" column="plate_number_id" jdbcType="INTEGER"/>
+        <result property="colorId" column="color_id" jdbcType="INTEGER"/>
+        <result property="modelId" column="model_id" jdbcType="INTEGER"/>
+        <result property="materialId" column="material_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ModelPlateMap">
+        select model_plate_id,
+               plate_number_id,
+               color_id,
+               model_id,
+               material_id
+        from model_plate
+        where model_plate_id = #{modelPlateId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ModelPlateMap">
+        select
+        model_plate_id, plate_number_id, color_id, model_id, material_id
+        from model_plate
+        <where>
+            <if test="modelPlateId != null">
+                and model_plate_id = #{modelPlateId}
+            </if>
+            <if test="plateNumberId != null">
+                and plate_number_id = #{plateNumberId}
+            </if>
+            <if test="colorId != null">
+                and color_id = #{colorId}
+            </if>
+            <if test="modelId != null">
+                and model_id = #{modelId}
+            </if>
+            <if test="materialId != null">
+                and material_id = #{materialId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from model_plate
+        <where>
+            <if test="modelPlateId != null">
+                and model_plate_id = #{modelPlateId}
+            </if>
+            <if test="plateNumberId != null">
+                and plate_number_id = #{plateNumberId}
+            </if>
+            <if test="colorId != null">
+                and color_id = #{colorId}
+            </if>
+            <if test="modelId != null">
+                and model_id = #{modelId}
+            </if>
+            <if test="materialId != null">
+                and material_id = #{materialId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="modelPlateId" useGeneratedKeys="true">
+        insert into model_plate(plate_number_id, color_id, model_id, material_id)
+        values (#{plateNumberId}, #{colorId}, #{modelId}, #{materialId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="modelPlateId" useGeneratedKeys="true">
+        insert into model_plate(plate_number_id, color_id, model_id, material_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.plateNumberId}, #{entity.colorId}, #{entity.modelId}, #{entity.materialId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="modelPlateId" useGeneratedKeys="true">
+        insert into model_plate(plate_number_id, color_id, model_id, material_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.plateNumberId}, #{entity.colorId}, #{entity.modelId}, #{entity.materialId})
+        </foreach>
+        on duplicate key update
+        plate_number_id = values(plate_number_id),
+        color_id = values(color_id),
+        model_id = values(model_id),
+        material_id = values(material_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update model_plate
+        <set>
+            <if test="plateNumberId != null">
+                plate_number_id = #{plateNumberId},
+            </if>
+            <if test="colorId != null">
+                color_id = #{colorId},
+            </if>
+            <if test="modelId != null">
+                model_id = #{modelId},
+            </if>
+            <if test="materialId != null">
+                material_id = #{materialId},
+            </if>
+        </set>
+        where model_plate_id = #{modelPlateId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from model_plate
+        where model_plate_id = #{modelPlateId}
+    </delete>
+
+</mapper>
+

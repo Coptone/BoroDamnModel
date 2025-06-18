@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.dao.BrandDao">
+
+    <resultMap type="com.coptone.source.entity.Brand" id="BrandMap">
+        <result property="brandId" column="brand_id" jdbcType="INTEGER"/>
+        <result property="chineseName" column="chinese_name" jdbcType="VARCHAR"/>
+        <result property="englishName" column="english_name" jdbcType="VARCHAR"/>
+        <result property="countryId" column="country_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BrandMap">
+        select brand_id,
+               chinese_name,
+               english_name,
+               country_id
+        from brand
+        where brand_id = #{brandId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BrandMap">
+        select
+        brand_id, chinese_name, english_name, country_id
+        from brand
+        <where>
+            <if test="brandId != null">
+                and brand_id = #{brandId}
+            </if>
+            <if test="chineseName != null and chineseName != ''">
+                and chinese_name = #{chineseName}
+            </if>
+            <if test="englishName != null and englishName != ''">
+                and english_name = #{englishName}
+            </if>
+            <if test="countryId != null">
+                and country_id = #{countryId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from brand
+        <where>
+            <if test="brandId != null">
+                and brand_id = #{brandId}
+            </if>
+            <if test="chineseName != null and chineseName != ''">
+                and chinese_name = #{chineseName}
+            </if>
+            <if test="englishName != null and englishName != ''">
+                and english_name = #{englishName}
+            </if>
+            <if test="countryId != null">
+                and country_id = #{countryId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="brandId" useGeneratedKeys="true">
+        insert into brand(chinese_name, english_name, country_id)
+        values (#{chineseName}, #{englishName}, #{countryId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="brandId" useGeneratedKeys="true">
+        insert into brand(chinese_name, english_name, country_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.chineseName}, #{entity.englishName}, #{entity.countryId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="brandId" useGeneratedKeys="true">
+        insert into brand(chinese_name, english_name, country_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.chineseName}, #{entity.englishName}, #{entity.countryId})
+        </foreach>
+        on duplicate key update
+        chinese_name = values(chinese_name),
+        english_name = values(english_name),
+        country_id = values(country_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update brand
+        <set>
+            <if test="chineseName != null and chineseName != ''">
+                chinese_name = #{chineseName},
+            </if>
+            <if test="englishName != null and englishName != ''">
+                english_name = #{englishName},
+            </if>
+            <if test="countryId != null">
+                country_id = #{countryId},
+            </if>
+        </set>
+        where brand_id = #{brandId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from brand
+        where brand_id = #{brandId}
+    </delete>
+
+</mapper>
+

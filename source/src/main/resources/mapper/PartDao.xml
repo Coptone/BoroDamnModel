@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.dao.PartDao">
+
+    <resultMap type="com.coptone.source.entity.Part" id="PartMap">
+        <result property="partId" column="part_id" jdbcType="INTEGER"/>
+        <result property="partName" column="part_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PartMap">
+        select part_id,
+               part_name
+        from part
+        where part_id = #{partId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PartMap">
+        select
+        part_id, part_name
+        from part
+        <where>
+            <if test="partId != null">
+                and part_id = #{partId}
+            </if>
+            <if test="partName != null and partName != ''">
+                and part_name = #{partName}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from part
+        <where>
+            <if test="partId != null">
+                and part_id = #{partId}
+            </if>
+            <if test="partName != null and partName != ''">
+                and part_name = #{partName}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="partId" useGeneratedKeys="true">
+        insert into part(part_name)
+        values (#{partName})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="partId" useGeneratedKeys="true">
+        insert into part(part_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.partName})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="partId" useGeneratedKeys="true">
+        insert into part(part_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.partName})
+        </foreach>
+        on duplicate key update
+        part_name = values(part_name)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update part
+        <set>
+            <if test="partName != null and partName != ''">
+                part_name = #{partName},
+            </if>
+        </set>
+        where part_id = #{partId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from part
+        where part_id = #{partId}
+    </delete>
+
+</mapper>
+
