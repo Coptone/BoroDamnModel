@@ -1,5 +1,19 @@
 package com.coptone.source.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 
 /**
@@ -8,49 +22,25 @@ import java.io.Serializable;
  * @author Coptone
  * @since 2025-06-18 11:38:54
  */
+@Builder
+@Data
+@Component
+@NoArgsConstructor
+@AllArgsConstructor
+@Scope("prototype")
+@Accessors(chain = true)
+@TableName("Brand")
 public class Brand implements Serializable {
     private static final long serialVersionUID = -97206550636126458L;
-
+    @TableId(type = IdType.AUTO)
     private Integer brandId;
-
+    @TableField("chineseName")
     private String chineseName;
-
+    @TableField("englishName")
     private String englishName;
-
+    @TableField("countryId")
     private Integer countryId;
 
-
-    public Integer getBrandId() {
-        return brandId;
-    }
-
-    public void setBrandId(Integer brandId) {
-        this.brandId = brandId;
-    }
-
-    public String getChineseName() {
-        return chineseName;
-    }
-
-    public void setChineseName(String chineseName) {
-        this.chineseName = chineseName;
-    }
-
-    public String getEnglishName() {
-        return englishName;
-    }
-
-    public void setEnglishName(String englishName) {
-        this.englishName = englishName;
-    }
-
-    public Integer getCountryId() {
-        return countryId;
-    }
-
-    public void setCountryId(Integer countryId) {
-        this.countryId = countryId;
-    }
 
 }
 
