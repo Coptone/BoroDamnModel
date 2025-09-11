@@ -19,12 +19,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class BaseRequest<T> {
-    private String status;
+    private OperationType status;
     private String message;
     private T data;
     private String timestamp;
 
-    public BaseRequest(String status, String message, T data) {
+    public BaseRequest(OperationType status, String message, T data) {
         this.status = status;
         this.message = message;
         this.data = data;
@@ -39,5 +39,8 @@ public class BaseRequest<T> {
                 ", data=" + data +
                 ", timestamp='" + timestamp + '\'' +
                 '}';
+    }
+    public enum OperationType{
+        IMAGE,REPORT
     }
 }

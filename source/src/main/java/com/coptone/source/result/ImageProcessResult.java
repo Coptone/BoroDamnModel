@@ -7,7 +7,7 @@ package com.coptone.source.result;
 import lombok.Data;
 
 /**
- * @Author: Jacob Zhang
+ * @Author: Jacob Zhangd
  * @CreateTime: 2025 - 07 - 29
  * @Description: 图片处理结果类
  * @Version: 1.0

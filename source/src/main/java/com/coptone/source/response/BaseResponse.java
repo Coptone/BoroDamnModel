@@ -17,8 +17,6 @@ import java.time.LocalDateTime;
  * @Description: 统一返回体
  * @Version: 1.0
  */
-@Getter
-@Setter
 @Data
 public class BaseResponse<T> implements Serializable {
     private int code;
@@ -29,6 +27,7 @@ public class BaseResponse<T> implements Serializable {
 
     public BaseResponse(int code, StatusType status, String message, T data) {
         this.code = code;
+        this.status = status;
         this.message = message;
         this.data = data;
         this.timestamp = LocalDateTime.now().toString();

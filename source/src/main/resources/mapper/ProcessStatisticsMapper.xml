@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.mapper.ProcessStatisticsMapper">
+
+    <!-- 获取周统计信息 -->
+    <select id="selectWeeklyStatistics" resultType="com.coptone.source.entity.util.ProcessStatistics">
+        SELECT
+        <!-- 计调指派 -->
+        SUM(CASE WHEN ws.status_name = '指派工人入场' THEN 1 ELSE 0 END) as dispatchCount,
+        SUM(CASE WHEN ws.status_name = '指派工人入场' AND TIMESTAMPDIFF(HOUR, pd.start_time, pd.end_time) > 48 THEN 1 ELSE 0 END) as dispatchOverdueCount,
+
+        <!-- 项目经理验收 -->
+        SUM(CASE WHEN pd.status_id = 16 THEN 1 ELSE 0 END) as managerAcceptanceCount,
+        SUM(CASE WHEN pd.status_id = 16 AND TIMESTAMPDIFF(HOUR, pd.start_time, pd.end_time) > 48 THEN 1 ELSE 0 END) as managerAcceptanceOverdueCount,
+
+        <!-- 配送验收 -->
+        SUM(CASE WHEN pd.status_id = 5 THEN 1 ELSE 0 END) as deliveryAcceptanceCount,
+        SUM(CASE WHEN pd.status_id = 5 AND TIMESTAMPDIFF(HOUR, pd.start_time, pd.end_time) > 48 THEN 1 ELSE 0 END) as deliveryAcceptanceOverdueCount,
+
+        <!-- 工人接单和完工 -->
+        SUM(CASE WHEN ws.status_name LIKE '%工人接单%' THEN 1 ELSE 0 END) as workerOrderCount,
+        SUM(CASE WHEN ws.status_name LIKE '%工人入场%' THEN 1 ELSE 0 END) as workerCompletionCount,
+        SUM(CASE WHEN ws.status_name LIKE '%工人接单%' AND TIMESTAMPDIFF(HOUR, pd.start_time, pd.end_time) > 48 THEN 1 ELSE 0 END) as workerOrderOverdueCount,
+
+        <!-- 供应商配送 -->
+        SUM(CASE WHEN ws.status_name LIKE '%供应商接单%' THEN 1 ELSE 0 END) as supplierDeliveryCount,
+        SUM(CASE WHEN ws.status_name LIKE '%供应商入场%' THEN 1 ELSE 0 END) as deliveryCompletionCount,
+        SUM(CASE WHEN ws.status_name LIKE '%供应商接单%' AND TIMESTAMPDIFF(HOUR, pd.start_time, pd.end_time) > 48 THEN 1 ELSE 0 END) as supplierOrderOverdueCount
+
+        FROM process_detail pd
+        LEFT JOIN workflow_status ws ON pd.status_id = ws.status_id
+        WHERE
+        pd.start_time &gt;= CURDATE() - INTERVAL 6 DAY
+        AND pd.end_time &lt;= CURDATE()
+        AND pd.remark IS NULL
+    </select>
+
+    <!-- 获取总工地数 -->
+    <select id="selectTotalSites" resultType="java.lang.Integer">
+        select count(*) from construction_site
+        where start_date >='2025-01-01'
+          and project_status like '%施工中%'
+          and site_concat not like '%测试%'
+          and site_concat not like '%培训%'
+    </select>
+
+</mapper>

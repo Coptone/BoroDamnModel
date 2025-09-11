@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = "com.coptone.source.*")
-@MapperScan("com.coptone.source.dao")
+@MapperScan("com.coptone.source.mapper")
 public class SourceApplication {
 
     public static void main(String[] args) {
