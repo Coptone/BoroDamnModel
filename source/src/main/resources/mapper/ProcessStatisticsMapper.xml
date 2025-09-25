@@ -3,7 +3,7 @@
 <mapper namespace="com.coptone.source.mapper.ProcessStatisticsMapper">
 
     <!-- 获取周统计信息 -->
-    <select id="selectWeeklyStatistics" resultType="com.coptone.source.entity.util.ProcessStatistics">
+    <select id="selectWeeklyStatistics" resultType="com.coptone.source.entity.wuyouco.util.ProcessStatistics">
         SELECT
         <!-- 计调指派 -->
         SUM(CASE WHEN ws.status_name = '指派工人入场' THEN 1 ELSE 0 END) as dispatchCount,
@@ -34,7 +34,34 @@
         AND pd.end_time &lt;= CURDATE()
         AND pd.remark IS NULL
     </select>
+    <!-- 统计计调本周指派的工地和指派的流程数量-->
+    <select id="selectFridayDispatcherStatistics" resultType="com.coptone.source.entity.wuyouco.util.ProcessStatistics">
+        -- 指派套数统计（按用户名近7天总和）
+        SELECT
+        cu.username,
+        COUNT(DISTINCT cs.site_concat) AS dispatchSiteCount,  -- 工地数
+        COUNT(*) AS dispatchCount                        -- 指派总数
+        FROM process_detail pd
+        LEFT JOIN construction_process cp
+        ON pd.process_id = cp.process_id
+        LEFT JOIN construction_site cs
+        ON pd.site_code = cs.site_code
+        LEFT JOIN construction_user cu
+        ON pd.responsible_user_id = cu.user_id
+        LEFT JOIN workflow_status ws
+        ON pd.status_id = ws.status_id
+        LEFT JOIN process_progress pp
+        ON cp.process_id = pp.process_id
+        AND pp.user_id = cu.user_id
+        AND pp.site_id = cs.site_code
+        WHERE pd.start_time &gt;= CURDATE() - INTERVAL 6 DAY
+        AND pd.end_time   &lt;= CURDATE()
+        AND ws.status_name LIKE '%指派%'
+        AND cu.username LIKE CONCAT('%',#{username},'%')
+        AND pd.remark IS NULL
+        GROUP BY cu.username;
 
+    </select>
     <!-- 获取总工地数 -->
     <select id="selectTotalSites" resultType="java.lang.Integer">
         select count(*) from construction_site

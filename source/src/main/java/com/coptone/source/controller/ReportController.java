@@ -4,6 +4,7 @@
 
 package com.coptone.source.controller;
 
+import com.coptone.source.entity.wuyouco.util.ProcessStatistics;
 import com.coptone.source.request.BaseRequest;
 import com.coptone.source.response.BaseResponse;
 import com.coptone.source.service.ProcessStatisticsService;
@@ -35,14 +36,14 @@ public class ReportController {
             return BaseResponse.fail(400,e.getMessage());
         }
     }
-    @PostMapping("/api/getDispatcherReport")
+    @PostMapping("/getDispatcherReport")
     public BaseResponse<String> generateWeeklyMondayReport(@RequestBody BaseRequest<ReportTemplate> request){
-//        try{
-//
-//        }catch (Exception e){
-//            return new BaseResponse<>(400, BaseResponse.StatusType.FAILED,"请求失败",e.getMessage());
-        return new BaseResponse<>(400, BaseResponse.StatusType.FAILED,"请求失败",null   );
-
-//        }
+        try{
+            ReportTemplate template = request.getData();
+            String reportContent = processStatisticsService.generateFridayDispatcherReport(template);
+            return BaseResponse.success(reportContent);
+        }catch (Exception e){
+            return new BaseResponse<>(400, BaseResponse.StatusType.FAILED,"请求失败",e.getMessage());
+        }
     }
 }

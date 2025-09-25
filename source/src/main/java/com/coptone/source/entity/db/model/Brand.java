@@ -2,7 +2,7 @@
  * Copyright (c) Jacob Zhang copyright message. 2022——2025.All rights reserved~(:3)~
  */
 
-package com.coptone.source.entity.model;
+package com.coptone.source.entity.db.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

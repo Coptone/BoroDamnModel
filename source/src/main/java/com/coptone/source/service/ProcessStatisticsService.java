@@ -4,11 +4,8 @@
 
 package com.coptone.source.service;
 
-import com.coptone.source.entity.util.ProcessStatistics;
-import com.coptone.source.mapper.ProcessStatisticsMapper;
+import com.coptone.source.entity.wuyouco.util.ProcessStatistics;
 import com.coptone.source.util.ReportTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @Author: Jacob Zhang
@@ -18,6 +15,8 @@ import org.springframework.stereotype.Service;
  */
 public interface ProcessStatisticsService {
     public String generateWeeklyReport();
+    public String generateFridayDispatcherReport(ReportTemplate reportTemplate);
     public String formatReport(ProcessStatistics processStatistics);
-    public String generateDispatcherReport();
+    public String formatFridayDispatcherReport(ProcessStatistics processStatistics);
+
 }

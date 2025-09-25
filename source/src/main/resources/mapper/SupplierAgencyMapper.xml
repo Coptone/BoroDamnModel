@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.mapper.SupplierAgencyMapper">
+
+    <resultMap id="BaseResultMap" type="com.coptone.source.entity.db.wuyouco.SupplierAgency">
+            <id property="saId" column="sa_id" />
+            <result property="siteCode" column="site_code" />
+            <result property="siteName" column="site_name" />
+            <result property="siteD" column="site_d" />
+            <result property="siteF" column="site_f" />
+            <result property="sgx" column="sgx" />
+            <result property="shPch" column="sh_pch" />
+            <result property="sType" column="s_type" />
+            <result property="skStatus" column="sk_status" />
+            <result property="payPrice" column="pay_price" />
+            <result property="factPrice" column="fact_price" />
+            <result property="kkPrice" column="kk_price" />
+            <result property="startTime" column="start_time" />
+            <result property="payTime" column="pay_time" />
+            <result property="remark" column="remark" />
+            <result property="concatName" column="concat_name" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sa_id,site_code,site_name,site_d,site_f,sgx,
+        sh_pch,s_type,sk_status,pay_price,fact_price,
+        kk_price,start_time,pay_time,remark,concat_name
+    </sql>
+</mapper>

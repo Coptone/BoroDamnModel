@@ -4,15 +4,13 @@
 
 package com.coptone.source.service.impl;
 
-import com.coptone.source.entity.util.ProcessStatistics;
+import com.coptone.source.entity.wuyouco.util.ProcessStatistics;
 import com.coptone.source.mapper.ProcessStatisticsMapper;
 import com.coptone.source.service.ProcessStatisticsService;
 import com.coptone.source.util.ReportTemplate;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,14 +34,25 @@ public class ProcessStatisticsServiceImpl implements ProcessStatisticsService {
         statistics.setTotalSites(totalSites);
         return formatReport(statistics);
     }
-
+    @Override
+    public String generateFridayDispatcherReport(ReportTemplate reportTemplate) {
+        ProcessStatistics statistics = statisticsMapper.selectFridayDispatcherStatistics(reportTemplate.getUsername());
+        return formatFridayDispatcherReport(statistics);
+    }
 
     @Override
-    public String genera teDispatcherReport() {
-
-        
-        return "";
+    public String formatFridayDispatcherReport(ProcessStatistics processStatistics) {
+        List<List<Item>> sections = List.of(
+                Arrays.asList(
+                        new Item(processStatistics.getDispatchSiteCount(), "共指派工地%s个", "无指派工地"),
+                        new Item(processStatistics.getDispatchCount(), "共指派流程%s项", "无指派流程")
+                )
+        );
+        return generateReport(sections);
     }
+
+
+
 
     @Override
     public String formatReport(ProcessStatistics processStatistics) {
@@ -68,16 +77,17 @@ public class ProcessStatisticsServiceImpl implements ProcessStatisticsService {
                         new Item(processStatistics.getSupplierOrderOverdueCount(), "供应商接单延期%s条", "无供应商接单延期")
                 )
         );
+        return generateReport(sections);
+    }
+    private String generateReport(List<List<Item>> sections) {
         StringBuilder report = new StringBuilder();
-        for(int i=0;i<sections.size();i++){
+        for (int i=0; i<sections.size(); i++) {
             List<Item> section = sections.get(i);
-            String part = section.stream().map(item -> formatCount(item.count,item.hasTemplate,item.zeroTemplate)).collect(Collectors.joining(","));
+            String part = section.stream().map(item -> formatCount(item.count, item.hasTemplate,item.zeroTemplate)).collect(Collectors.joining(","));
             report.append(i+1).append("、本周").append(part).append("\n");
         }
-       return report.toString();
+        return report.toString();
     }
-
-
     // 小工具类
     private static class Item {
         Integer count;

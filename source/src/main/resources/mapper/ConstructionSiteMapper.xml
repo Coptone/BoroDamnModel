@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Jacob Zhang copyright message. 2022——2025.All rights reserved~(:3)~
+  -->
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.mapper.ConstructionSiteMapper">
+
+    <resultMap id="BaseResultMap" type="com.coptone.source.entity.db.wuyouco.ConstructionSite">
+            <result property="siteCode" column="site_code" />
+            <result property="province" column="province" />
+            <result property="city" column="city" />
+            <result property="district" column="district" />
+            <result property="communityName" column="community_name" />
+            <result property="buildingNo" column="building_no" />
+            <result property="roomNo" column="room_no" />
+            <result property="contractDate" column="contract_date" />
+            <result property="startDate" column="start_date" />
+            <result property="completionDate" column="completion_date" />
+            <result property="currentProcess" column="current_process" />
+            <result property="projectStatus" column="project_status" />
+            <result property="supervisor" column="supervisor" />
+            <result property="contractAmount" column="contract_amount" />
+            <result property="excludedBudget" column="excluded_budget" />
+            <result property="finalPaymentReceived" column="final_payment_received" />
+            <result property="recordDepartment" column="record_department" />
+            <result property="recorder" column="recorder" />
+            <result property="siteConcat" column="site_concat" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        site_code,province,city,district,community_name,building_no,
+        room_no,contract_date,start_date,completion_date,current_process,
+        project_status,supervisor,contract_amount,excluded_budget,final_payment_received,
+        record_department,recorder,site_concat
+    </sql>
+    <select id="getSiteCount" parameterType="int" resultMap="BaseResultMap">
+        select count(*) from construction_site
+        where start_date >='2025-01-01'
+          and project_status like '%施工中%'
+          and site_concat not like '%测试%'
+          and site_concat not like '%培训%'
+    </select>
+</mapper>

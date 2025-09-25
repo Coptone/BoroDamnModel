@@ -2,7 +2,7 @@
  * Copyright (c) Jacob Zhang copyright message. 2022——2025.All rights reserved~(:3)~
  */
 
-package com.coptone.source.entity.util;
+package com.coptone.source.entity.wuyouco.util;
 
 import lombok.Data;
 
@@ -27,4 +27,5 @@ public class ProcessStatistics {
     private Integer supplierDeliveryCount;
     private Integer deliveryCompletionCount;
     private Integer supplierOrderOverdueCount;
+    private Integer dispatchSiteCount;
 }

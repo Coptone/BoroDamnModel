@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.mapper.ProcessProgressMapper">
+
+    <resultMap id="BaseResultMap" type="com.coptone.source.entity.db.wuyouco.ProcessProgress">
+            <id property="progressId" column="progress_id" />
+            <result property="processId" column="process_id" />
+            <result property="siteId" column="site_id" />
+            <result property="userId" column="user_id" />
+            <result property="status" column="status" />
+            <result property="startTime" column="start_time" />
+            <result property="endTime" column="end_time" />
+            <result property="isDelayed" column="is_delayed" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        progress_id,process_id,site_id,user_id,status,start_time,
+        end_time,is_delayed
+    </sql>
+</mapper>

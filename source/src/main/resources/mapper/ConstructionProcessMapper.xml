@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coptone.source.mapper.ConstructionProcessMapper">
+
+    <resultMap id="BaseResultMap" type="com.coptone.source.entity.db.wuyouco.ConstructionProcess">
+            <id property="processId" column="process_id" />
+            <result property="processName" column="process_name" />
+            <result property="standardHours" column="standard_hours" />
+            <result property="processType" column="process_type" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        process_id,process_name,standard_hours,process_type
+    </sql>
+</mapper>

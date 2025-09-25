@@ -8,7 +8,5 @@ import lombok.Data;
 
 @Data
 public  class ReportTemplate{
-    private String part1;
-    private String part2;
-    private String part3;
+    private String username;
 }

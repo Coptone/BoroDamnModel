@@ -5,11 +5,8 @@
 package com.coptone.source.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.coptone.source.entity.util.ProcessStatistics;
+import com.coptone.source.entity.wuyouco.util.ProcessStatistics;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.Date;
 
 /**
  * @Author: Jacob Zhang
@@ -28,4 +25,7 @@ public interface ProcessStatisticsMapper extends BaseMapper<Object> {
      * 获取总工地数
      */
     Integer selectTotalSites();
+
+    ProcessStatistics selectFridayDispatcherStatistics(String username);
+
 }
