@@ -1,52 +1,36 @@
-name: Build and Deploy
+##################### ⚙️ container configuration #####################################################
+image: registry.baidubce.com/gitee_go/maven-plugin:saas-23
+cpu: 2
+memory: 4Gi
+######################################################################################################
 
-on:
-  push:
-    branches:
-      - master
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
+stages:
+  - name: Build and Deploy
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-
       - name: Build with Maven
-        run: mvn clean package -DskipTests
-        working-directory: ./source
+        script:
+          # 进入 pom.xml 所在目录并构建
+          - cd source
+          - mvn -B clean package -Dmaven.test.skip=true
 
-      - name: Compress
-        run: |
-          mkdir -p ./package
-          cp ./source/target/*.jar ./package/
-          tar czf ./package/BoroDamn.tar.gz -C ./package .
+      - name: Prepare package
+        script:
+          - mkdir -p package
+          - cp source/target/*.jar package/
+          - tar czf package/BoroDamn.tar.gz -C package .
 
-      - name: Deploy to server
-        env:
-          HOST: ${{ secrets.SERVER_HOST }}
-          USER: ${{ secrets.SERVER_USER }}
-          KEY: ${{ secrets.SERVER_SSH_KEY }}
-        run: |
-          echo "$KEY" > key.pem
-          chmod 600 key.pem
-          scp -o StrictHostKeyChecking=no -i key.pem ./package/BoroDamn.tar.gz $USER@$HOST:/opt/BoroDamn/build/
-          ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST "
+      - name: Copy jar to server
+        script:
+          - apt-get update && apt-get install -y openssh-client
+          - echo "$SERVER_SSH_KEY" > key.pem
+          - chmod 600 key.pem
+          - scp -o StrictHostKeyChecking=no -i key.pem package/BoroDamn.tar.gz $SERVER_USER@$SERVER_HOST:/opt/BoroDamn/build/
+
+      - name: Deploy on server
+        script:
+          - ssh -o StrictHostKeyChecking=no -i key.pem $SERVER_USER@$SERVER_HOST "
             cd /opt/BoroDamn/build &&
             tar xzf BoroDamn.tar.gz &&
             cd /opt/BoroDamn &&
             ./deploy.sh
-          "
-stages:
-  - name: Build
-    steps:
-      - name: Build with Maven
-        script:
-          - mvn -B -f source/pom.xml clean package -Dmaven.test.skip=true
+            "
