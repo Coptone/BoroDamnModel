@@ -34,7 +34,8 @@ jobs:
         run: |
           mkdir -p ./deploy
           cp ./source/target/*.jar ./deploy/
-          tar czf ./deploy/BoroDamn.tar.gz -C ./deploy .
+          mkdir -p ./package
+          tar czf ./package/BoroDamn.tar.gz -C ./deploy .
 
       # 6️⃣ 上传到服务器
       - name: Upload tar to server
@@ -43,7 +44,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "./deploy/BoroDamn.tar.gz"
+          source: "./package/BoroDamn.tar.gz"
           target: "/opt/BoroDamn/build/"
           strip_components: 0
           rm: false
