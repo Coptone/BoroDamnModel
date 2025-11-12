@@ -1,74 +1,49 @@
-name: Build and Deploy
+name: CI/CD Build & Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       # 1️⃣ 拉取代码
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ 设置 JDK
-      - name: Set up JDK
+      # 2️⃣ 设置 JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3️⃣ Maven 打包
+      # 3️⃣ Maven 构建 jar/war
       - name: Build with Maven
-        run: mvn clean package -DskipTests
         working-directory: ./source
+        run: mvn -B clean package -DskipTests
 
-      # 4️⃣ 查看 jar 文件，确认生成
-      - name: List jar
-        run: ls -lh ./source/target/
-
-      # 5️⃣ 压缩 jar 文件，减少上传耗时
-      - name: Compress jar
-        run: |
-          mkdir -p ./deploy
-          cp ./source/target/*.jar ./deploy/
-          mkdir -p ./package
-          tar czf ./package/BoroDamn.tar.gz -C ./deploy .
-
-      # 6️⃣ 上传到服务器
-      - name: Upload tar to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "./package/BoroDamn.tar.gz"
-          target: "/opt/BoroDamn/build/"
-          strip_components: 0
-          rm: false
-          port: 22
-
-      # 7️⃣ SSH 到服务器解压并执行部署
+      # 4️⃣ 上传 jar/war 到服务器
       - name: Deploy to server
         env:
           HOST: ${{ secrets.SERVER_HOST }}
           USER: ${{ secrets.SERVER_USER }}
           KEY: ${{ secrets.SERVER_SSH_KEY }}
         run: |
+          # 保存 SSH 私钥
           echo "$KEY" > key.pem
           chmod 600 key.pem
-          # 查看文件是否存在
-          ls -l $GITHUB_WORKSPACE/package
-          # 上传文件到服务器
-          scp -o StrictHostKeyChecking=no -i key.pem $GITHUB_WORKSPACE/package/BoroDamn.tar.gz $USER@$HOST:/opt/BoroDamn/build/
-          # 执行部署
+
+          # 上传构建产物（假设只会有一个 jar/war）
+          scp -o StrictHostKeyChecking=no -i key.pem ./source/target/*.jar $USER@$HOST:/opt/BoroDamn/app.jar
+
+          # 替换原文件并重启服务
           ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST "
-            cd /opt/BoroDamn/build &&
-            ls -l &&
-            tar xzf BoroDamn.tar.gz &&
-            cd /opt/BoroDamn &&
-            chmod +x deploy.sh &&
-            ./deploy.sh
+            # 停止服务（根据你实际启动方式修改）
+            systemctl stop borodamn || pkill -f 'java.*app.jar'
+
+            # 启动新版本
+            nohup java -jar /opt/BoroDamn/app.jar > /opt/BoroDamn/logs/app.log 2>&1 &
           "
