@@ -41,6 +41,6 @@ public class BaseRequest<T> {
                 '}';
     }
     public enum OperationType{
-        IMAGE,REPORT
+        IMAGE,REPORT,LIST
     }
 }
