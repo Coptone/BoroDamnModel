@@ -49,5 +49,4 @@ stages:
     steps:
       - name: Build with Maven
         script:
-          - cd source
-          - mvn -B clean package -Dmaven.test.skip=true
+          - mvn -B -f source/pom.xml clean package -Dmaven.test.skip=true
