@@ -9,34 +9,60 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ 拉取代码
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2️⃣ 设置 JDK
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
+      # 3️⃣ Maven 打包
       - name: Build with Maven
         run: mvn clean package -DskipTests
-        working-directory: ./source   # 👈 指定 pom.xml 所在目录
+        working-directory: ./source
 
-      - name: Copy jar to server
-        uses: appleboy/scp-action@v0.1.7
+      # 4️⃣ 查看 jar 文件，确认生成
+      - name: List jar
+        run: ls -lh ./source/target/
+
+      # 5️⃣ 压缩 jar 文件，减少上传耗时
+      - name: Compress jar
+        run: |
+          mkdir -p ./deploy
+          cp ./source/target/*.jar ./deploy/
+          tar czf ./deploy/BoroDamn.tar.gz -C ./deploy .
+
+      # 6️⃣ 上传到服务器
+      - name: Upload tar to server
+        uses: appleboy/scp-action@v0.1.10
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "source/target/*.jar"   # 👈 构建产物在 source/target
+          source: "./deploy/BoroDamn.tar.gz"
           target: "/opt/BoroDamn/build/"
+          strip_components: 0
+          rm: false
+          port: 22
 
+      # 7️⃣ SSH 到服务器解压并执行部署
       - name: Deploy on server
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
           script: |
-            cd /opt/myapp
+            # 确保目标目录存在
+            mkdir -p /opt/BoroDamn/build
+            cd /opt/BoroDamn/build
+            # 解压最新上传的包
+            tar xzf BoroDamn.tar.gz
+            # 可选：执行自定义部署脚本
+            cd /opt/BoroDamn
             ./deploy.sh
