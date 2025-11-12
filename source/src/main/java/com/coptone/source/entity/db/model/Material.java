@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Coptone
  * @since 2025-06-18 11:38:53
  */
-public class Material implements Serializable {
+public class    Material implements Serializable {
     private static final long serialVersionUID = -91640642897553669L;
 
     private Integer materialId;
