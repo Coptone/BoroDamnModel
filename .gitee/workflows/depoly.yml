@@ -44,3 +44,10 @@ jobs:
             cd /opt/BoroDamn &&
             ./deploy.sh
           "
+stages:
+  - name: Build
+    steps:
+      - name: Build with Maven
+        script:
+          - cd source
+          - mvn -B clean package -Dmaven.test.skip=true
